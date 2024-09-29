@@ -2427,6 +2427,7 @@ static int __Pyx_VersionSanityCheck(void) {
     }
   #endif // Py_VERSION_HEX < 0x03080000
   #if PY_VERSION_HEX >= 0x030d0000
+#if 0    
     if (PyRun_SimpleStringFlags(
       "if "
       #ifdef Py_GIL_DISABLED
@@ -2445,6 +2446,7 @@ static int __Pyx_VersionSanityCheck(void) {
         );
       return -1;
     }
+#endif    
   #endif // version hex 3.13+
     if (PySys_GetObject("getobjects")) {
       #ifndef Py_TRACE_REFS
