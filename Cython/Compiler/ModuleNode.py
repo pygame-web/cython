@@ -3041,7 +3041,7 @@ class ModuleNode(Nodes.Node, Nodes.BlockNode):
         code.putln("{")
         code.putln("    PyObject *cython_mod = PyModuleDef_Init(&%s);"  % Naming.pymoduledef_cname)
         code.putln("    if (PyErr_Occurred()) {")
-        code.putln("        puts(\"Cython-wasm error in %s : \" __FILE__);" % Naming.pymoduledef_cname )
+        code.putln("        fputs(\"Cython-wasm error in %s : \" __FILE__, stderr);" % Naming.pymoduledef_cname )
         code.putln("        if (__Pyx_VersionSanityCheck() < 0) return NULL;")
         code.putln("            PyErr_Clear();")
         code.putln("    }")
