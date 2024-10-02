@@ -2383,7 +2383,6 @@ static int __Pyx_VersionSanityCheck(void); /* proto */
 /////////////////////////// PyVersionSanityCheck ///////////////////////
 #if defined(__EMSCRIPTEN__) || defined(__wasi__)
 static int __Pyx_VersionSanityCheck(void) {
-    puts("Cython-wasm:/" __FILE__);
     return 0;
 }
 #else

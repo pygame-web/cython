@@ -3039,8 +3039,16 @@ class ModuleNode(Nodes.Node, Nodes.BlockNode):
         # CPython 3.5+ supports multi-phase module initialisation (gives access to __spec__, __file__, etc.)
         code.putln("#if CYTHON_PEP489_MULTI_PHASE_INIT")
         code.putln("{")
-        code.putln("if (__Pyx_VersionSanityCheck() < 0) return NULL;")
-        code.putln("return PyModuleDef_Init(&%s);" % Naming.pymoduledef_cname)
+        code.putln("    PyObject *cython_mod = PyModuleDef_Init(&%s);"  % Naming.pymoduledef_cname)
+        code.putln("    if (PyErr_Occurred()) {")
+        code.putln("        puts(\"Cython-wasm error in %s : \" __FILE__);" % Naming.pymoduledef_cname )
+        code.putln("        if (__Pyx_VersionSanityCheck() < 0) return NULL;")
+        code.putln("            PyErr_Clear();")
+        code.putln("    }")
+        code.putln("#ifdef Py_GIL_DISABLED")
+        code.putln("    PyUnstable_Module_SetGIL(cython_mod, Py_MOD_GIL_NOT_USED);")
+        code.putln("#endif // Py_GIL_DISABLED")
+        code.putln("    return cython_mod;");
         code.putln("}")
 
         mod_create_func = UtilityCode.load("ModuleCreationPEP489", "ModuleSetupCode.c")
