@@ -2381,7 +2381,12 @@ done:
 static int __Pyx_VersionSanityCheck(void); /* proto */
 
 /////////////////////////// PyVersionSanityCheck ///////////////////////
-
+#if defined(__EMSCRIPTEN__) || defined(__wasi__)
+static int __Pyx_VersionSanityCheck(void) {
+    puts("Cython-wasm:/" __FILE__);
+    return 0;
+}
+#else
 static int __Pyx_VersionSanityCheck(void) {
   // Implementation notes:
   //  The main thing I'm worried about in mixing up Py_GIL_DISABLED since this is incredibly
@@ -2427,7 +2432,6 @@ static int __Pyx_VersionSanityCheck(void) {
     }
   #endif // Py_VERSION_HEX < 0x03080000
   #if PY_VERSION_HEX >= 0x030d0000
-#if 0    
     if (PyRun_SimpleStringFlags(
       "if "
       #ifdef Py_GIL_DISABLED
@@ -2445,8 +2449,9 @@ static int __Pyx_VersionSanityCheck(void) {
       #endif
         );
       return -1;
+    } else {
+        PyRun_SimpleString("print(f'ok {__name__}')");
     }
-#endif    
   #endif // version hex 3.13+
     if (PySys_GetObject("getobjects")) {
       #ifndef Py_TRACE_REFS
@@ -2478,7 +2483,7 @@ static int __Pyx_VersionSanityCheck(void) {
   #endif
     return 0;
 }
-
+#endif // defined(__EMSCRIPTEN__) || defined(__wasi__)
 /////////////////////////// AccessPyMutexForFreeThreading.proto ////////////
 
 #if CYTHON_COMPILING_IN_CPYTHON_FREETHREADING
